@@ -28,7 +28,7 @@ nb-configuration.xml
 .vscode/
 .code-workspace
 .DS_Store
-
+python/myExtra/
 
 # Python files
 # Byte-compiled / optimized / DLL files

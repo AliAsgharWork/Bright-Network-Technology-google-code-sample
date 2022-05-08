@@ -1,5 +1,8 @@
 """A video player class."""
 import random
+from enum import Enum
+
+from idna import check_bidi
 from .video_library import VideoLibrary
 # key to identify function status
 # LOOKS CLEAR
@@ -7,13 +10,43 @@ from .video_library import VideoLibrary
 # LATER
 
 
+class video_state(Enum):
+    Playing = 1
+    Pause = 2
+    Stop = 3
+    Continue = 4
+
+
+class Playlist:
+
+    def __init__(self):
+        self.recently_created = ""
+        self.playlist = []
+
+    def create_playlist(self, name):
+        # Lowercase list
+        lowercase_playlist = []
+        for element in self.playlist:
+            lowercase_playlist.append(element.lower())
+        # Checking if the playlist is there or not
+        if(lowercase_playlist.count(name.lower()) == 0):
+            self.recently_created = name
+            self.playlist.append(name)
+            print(f"Successfully created new playlist: {name}")
+        else:
+            print("Cannot create playlist: A playlist with the same name already exists")
+
+    # def add_to_playlist(self,name,id):
+
+
 class VideoPlayer:
     """A class used to represent a Video Player."""
-    last_played_video = []
-    pause_status = False
 
     def __init__(self):
         self._video_library = VideoLibrary()
+        self.last_played_video = []
+        pause_status = False
+        self.Playlist = Playlist()
 
     def is_last_played_video_empty(self):
         return bool(len(self.last_played_video) == 0)
@@ -33,7 +66,7 @@ class VideoPlayer:
             vidtag = " ".join(video.tags)
             print(f" {video.title} ({video.video_id}) [{vidtag}]")
 
-    def play_video(self, video_id):  # LATER
+    def play_video(self, video_id):  # DONE
         """Plays the respective video.
 
         Args:
@@ -50,8 +83,6 @@ class VideoPlayer:
         video = self._video_library.get_video(video_id)
 
         if(video == None):  # If the video ID is invalid
-            # if(len(self.last_played_video) != 0):#invalid input and video was playing
-            #     print(f"Stopping video: {self.last_played_video[-1].title}")
             return print("Cannot play video: Video does not exist")
 
         # unpause the video
@@ -66,7 +97,7 @@ class VideoPlayer:
 
         self.last_played_video.append(video)
 
-    def stop_video(self):  # LOOKS CLEAR
+    def stop_video(self):  # DONE
         """Stops the current video."""
         if(self.is_last_played_video_empty()):
             return print("Cannot stop video: No video is currently playing")
@@ -76,7 +107,7 @@ class VideoPlayer:
         self.last_played_video.clear()
         self.pause_status == False
 
-    def play_random_video(self):  # LATER
+    def play_random_video(self):  # DONE
         """Plays a random video from the video library."""
         all_videos_list = self._video_library.get_all_videos()
         number_of_videos = len(self._video_library.get_all_videos())
@@ -84,7 +115,7 @@ class VideoPlayer:
         random_number = random.randrange(number_of_videos)
         self.play_video(all_videos_list[random_number]._video_id)
 
-    def pause_video(self):
+    def pause_video(self):  # DONE
         """Pauses the current video."""
         """edge cases
         pause video
@@ -98,10 +129,10 @@ class VideoPlayer:
         elif(self.pause_status == True):
             print(f"Video already paused: {self.last_played_video[-1].title}")
 
-    def continue_video(self):
+    def continue_video(self):  # DONE
         """Resumes playing the current video."""
         if(self.is_last_played_video_empty()):
-            return print("Cannot continue video: Video is not paused")
+            return print("Cannot continue video: No video is currently playing")
         if(self.pause_status == True):
             print(f"Continuing video: {self.last_played_video[-1].title}")
             self.pause_status = False
@@ -110,7 +141,7 @@ class VideoPlayer:
 
         # print("continue_video needs implementation")
 
-    def show_playing(self):
+    def show_playing(self):  # DONE
         """Displays video currently playing."""
 
         if(self.is_last_played_video_empty()):
@@ -122,18 +153,25 @@ class VideoPlayer:
         show = (f"{video.title} ({video.video_id}) [{vidtag}]")
 
         if(self.pause_status == True):
-            print("Currently playing:", show, " - PAUSED")
+            print("Currently playing:", show, "- PAUSED")
         elif(self.pause_status == False):
             print("Currently playing:", show)
         # print("show_playing needs implementation")
 
-    def create_playlist(self, playlist_name):
+#                          ========================================= PART 2 =========================================
+
+    def check_whitespace(text):
+        return text.isspace()
+
+    def create_playlist(self, playlist_name):  # Later
         """Creates a playlist with a given name.
 
         Args:
             playlist_name: The playlist name.
         """
-        print("create_playlist needs implementation")
+        check_whitespace(playlist_name)
+
+        self.Playlist.create_playlist(playlist_name)
 
     def add_to_playlist(self, playlist_name, video_id):
         """Adds a video to a playlist with a given name.
